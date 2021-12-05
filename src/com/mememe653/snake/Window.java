@@ -11,6 +11,13 @@ import javax.swing.Timer;
 
 public class Window extends JPanel implements ActionListener {
 	
+	public enum Direction {
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN
+	}
+	
 	private final int DELAY = 100;
 	
 	private final int WIDTH = 300;
@@ -26,6 +33,8 @@ public class Window extends JPanel implements ActionListener {
 	
 	private int x[] = new int[MAX_DOTS];
 	private int y[] = new int[MAX_DOTS];
+	
+	private Direction snakeDirection = Direction.RIGHT;
 	
 	private int apple_x;
 	private int apple_y;
@@ -79,8 +88,19 @@ public class Window extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		int tail_x = x[dots-1];
+		int tail_y = y[dots-1];
 		moveSnake();
 		repaint();
+		if (checkCollision()) {
+			gameOver();
+		}
+		if (checkAppleEaten()) {
+			x[dots] = tail_x;
+			y[dots] = tail_y;
+			dots++;
+			relocateApple();
+		}
 	}
 	
 	private void moveSnake() {
@@ -88,8 +108,46 @@ public class Window extends JPanel implements ActionListener {
 			x[i] = x[i-1];
 			y[i] = y[i-1];
 		}
-		x[0] += DOT_WIDTH;
-		x[0] = x[0] % WIDTH;
+		
+		switch (snakeDirection) {
+		case LEFT:
+			x[0] -= DOT_WIDTH;
+			x[0] %= WIDTH;
+			break;
+		case RIGHT:
+			x[0] += DOT_WIDTH;
+			x[0] %= WIDTH;
+			break;
+		case UP:
+			y[0] -= DOT_WIDTH;
+			y[0] %= HEIGHT;
+			break;
+		case DOWN:
+			y[0] += DOT_WIDTH;
+			y[0] %= HEIGHT;
+			break;
+		}
+	}
+	
+	private boolean checkCollision() {
+		for (int i = 1; i < dots; i++) {
+			if (x[0] == x[i] && y[0] == y[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkAppleEaten() {
+		if (x[0] == apple_x && y[0] == apple_y) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private void gameOver() {
+		timer.stop();
 	}
 
 }
