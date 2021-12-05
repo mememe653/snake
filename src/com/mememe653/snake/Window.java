@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -47,6 +49,8 @@ public class Window extends JPanel implements ActionListener {
 		initApple();
 		
 		timer.start();
+		setFocusable(true);
+		addKeyListener(new KeypressListener());
 	}
 	
 	private void initWindow() {
@@ -67,8 +71,8 @@ public class Window extends JPanel implements ActionListener {
 	}
 	
 	private void relocateApple() {
-		apple_x = (int) (Math.random() * WIDTH);
-		apple_y = (int) (Math.random() * HEIGHT);
+		apple_x = (int) (Math.random() * WIDTH / DOT_WIDTH) * DOT_WIDTH;
+		apple_y = (int) (Math.random() * HEIGHT / DOT_WIDTH) * DOT_WIDTH;
 	}
 	
 	@Override
@@ -148,6 +152,45 @@ public class Window extends JPanel implements ActionListener {
 	
 	private void gameOver() {
 		timer.stop();
+	}
+	
+	private class KeypressListener extends KeyAdapter {
+		
+		@Override
+		public void keyPressed(KeyEvent e) {
+			int key = e.getKeyCode();
+			if (key == KeyEvent.VK_A) {
+				switch (snakeDirection) {
+				case LEFT:
+					snakeDirection = Direction.DOWN;
+					break;
+				case RIGHT:
+					snakeDirection = Direction.UP;
+					break;
+				case UP:
+					snakeDirection = Direction.LEFT;
+					break;
+				case DOWN:
+					snakeDirection = Direction.RIGHT;
+					break;
+				}
+			} else if (key == KeyEvent.VK_D) {
+				switch (snakeDirection) {
+				case LEFT:
+					snakeDirection = Direction.UP;
+					break;
+				case RIGHT:
+					snakeDirection = Direction.DOWN;
+					break;
+				case UP:
+					snakeDirection = Direction.RIGHT;
+					break;
+				case DOWN:
+					snakeDirection = Direction.LEFT;
+					break;
+				}
+			}
+		}
 	}
 
 }
